@@ -1,0 +1,42 @@
+name: Fapanister Wake Control
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.event.issue.title == 'Fapanister Wake Control'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate and sync wake command
+        shell: bash
+        env:
+          BODY: ${{ github.event.issue.body }}
+        run: |
+          set -euo pipefail
+          cmd="$(printf '%s' "$BODY" | tr -d '\r' | head -n 1)"
+          if [[ ! "$cmd" =~ ^[A-Za-z0-9_.:-]{1,100}\|(WAKE|NONE)$ ]]; then
+            echo "Invalid wake command"
+            exit 1
+          fi
+          printf '%s\n' "$cmd" > wake-trigger.txt
+
+      - name: Commit signal
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- wake-trigger.txt; then
+            echo "Signal unchanged"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add wake-trigger.txt
+          git commit -m "Sync Fapanister wake signal"
+          git push
