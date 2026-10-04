@@ -1,1 +1,1 @@
-control-test-20261004-2012|NONE
+wol-control-online-20261004-2013|WAKE
