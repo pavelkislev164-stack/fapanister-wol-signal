@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   sync:
-    if: github.event.issue.title == 'Fapanister Recovery Control'
+    if: github.actor == 'pavelkislev164-stack' && github.event.issue.title == 'Fapanister Recovery Control'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
