@@ -1,0 +1,37 @@
+name: Fapanister Recovery Control
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.event.issue.title == 'Fapanister Recovery Control'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate and sync recovery command
+        shell: bash
+        env:
+          BODY: ${{ github.event.issue.body }}
+        run: |
+          set -euo pipefail
+          cmd="$(printf '%s' "$BODY" | tr -d '\r' | head -n 1)"
+          if [[ ! "$cmd" =~ ^[A-Za-z0-9_.:-]{1,100}\|(STATUS|RECOVER_DC|RECOVER_LIRA|RECOVER_MESH|RECOVER_RUSTDESK|RECOVER_ALL|NONE)$ ]]; then
+            echo "Invalid recovery command"
+            exit 1
+          fi
+          printf '%s\n' "$cmd" > recovery-trigger.txt
+      - name: Commit signal
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- recovery-trigger.txt; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add recovery-trigger.txt
+          git commit -m "Sync Fapanister recovery signal"
+          git push
