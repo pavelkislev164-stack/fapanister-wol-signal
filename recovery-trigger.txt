@@ -1,1 +1,1 @@
-cert-recover-lira-healthy-20261007-02|RECOVER_LIRA
+cert-recover-lira-healthy-20261007-03|RECOVER_LIRA
