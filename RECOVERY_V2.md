@@ -50,24 +50,53 @@ Windows log confirmed accepted STATUS from 192.168.1.1.
 Unsigned traffic was separately tested and correctly rejected.
 
 RECOVER_DC:
-1. Healthy RECOVER_DC succeeded while Desktop Commander was already online.
+1. Healthy RECOVER_DC succeeded while Desktop Commander was online.
 2. Controlled failure certification:
-   - normal Desktop Commander startup script was temporarily moved aside so Task Scheduler could not be the recovery source;
+   - normal Desktop Commander startup script was temporarily moved aside;
    - Desktop Commander remote processes were terminated;
    - a DC tool call timed out, confirming loss of the primary channel;
-   - a fresh RECOVER_DC was sent through GitHub;
+   - fresh RECOVER_DC was sent through GitHub;
    - Windows Recovery Agent accepted RECOVER_DC from 192.168.1.1;
-   - Desktop Commander returned with a new process chain using the dedicated recovery script;
-   - the normal startup script was restored;
-   - GitHub trigger was reset to NONE.
+   - Desktop Commander returned via the dedicated recovery script;
+   - normal startup script was restored;
+   - GitHub trigger returned to NONE.
 
 Independent RECOVER_DC is CERTIFIED.
 
-Windows dedicated recovery script:
+Dedicated recovery script:
 C:\Users\FAPster\RecoveryV2\Recover-DesktopCommander.ps1
+
+RECOVER_LIRA:
+1. Healthy RECOVER_LIRA succeeded while LiraBrowser was listening on 127.0.0.1:9333.
+2. Controlled failure certification:
+   - normal Start-LiraBrowser.ps1 was temporarily moved aside so the scheduled task could not be the recovery source;
+   - only Chrome processes using C:\Users\FAPster\LiraBrowser\Profile were terminated;
+   - port 9333 was verified DOWN and matching Chrome process count became 0;
+   - fresh RECOVER_LIRA was sent through GitHub;
+   - Windows Recovery Agent accepted RECOVER_LIRA from 192.168.1.1 with ok=True;
+   - port 9333 returned LISTENING;
+   - LiraBrowser reopened using the same persistent profile;
+   - Playwright reattached to https://tilda.ru/projects/;
+   - post-recovery check showed no password field and no login prompt, confirming the existing Tilda session survived;
+   - normal Start-LiraBrowser.ps1 was restored;
+   - GitHub trigger returned to NONE.
+
+Independent RECOVER_LIRA is CERTIFIED.
+
+Dedicated recovery script:
+C:\Users\FAPster\RecoveryV2\Recover-LiraBrowser.ps1
+
+## Administrative note
+
+Classic Windows OpenSSH launched directly from the Desktop Commander session still returns exit 255.
+A working alternative was found on 2026-10-07:
+Desktop Commander -> Node.js -> ssh2 npm library -> Cudy/OpenWrt using the existing recovery key.
+
+This is an administrative/experimental route, not part of the Recovery v2 command allowlist.
 
 ## Next
 
-1. Implement and certify RECOVER_LIRA without replacing or deleting the persistent browser profile.
-2. Then implement RECOVER_MESH and RECOVER_RUSTDESK.
-3. Final cold-boot/recovery/security audit.
+1. Implement and certify RECOVER_MESH.
+2. Implement and certify RECOVER_RUSTDESK.
+3. RustDesk laptop input test.
+4. Final cold-boot/recovery/security audit.
