@@ -1,1 +1,1 @@
-idle-20261005-1849|NONE
+cert-status-20261007-cudy1|STATUS
