@@ -22,6 +22,9 @@ Relevant files:
 - router/fapanister-recovery-v2-poll
 - router/fapanister-hmac.uc
 - router/fapanister-recovery-v2-init
+- router/fapanister-recovery-v2-poll
+- router/fapanister-hmac.uc
+- router/fapanister-recovery-v2-init
 
 Strict command allowlist:
 STATUS
