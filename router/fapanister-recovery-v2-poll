@@ -11,10 +11,11 @@ PORT='8765'
 
 log() { logger -t fapanister-recovery-v2 "$*"; }
 
-send_status() {
+send_action() {
+  action="$1"
   ts="$(date +%s)"
   nonce="$(head -c 16 /dev/urandom | hexdump -v -e '/1 "%02x"')"
-  body="$ts|$nonce|STATUS"
+  body="$ts|$nonce|$action"
   key_b64="$(cat "$SECRET" 2>/dev/null)" || return 1
   sig="$(ucode -D key_b64="$key_b64" -D body="$body" "$HMAC" 2>/dev/null)" || return 1
   [ "$(expr length "$sig")" -eq 64 ] || return 1
@@ -38,7 +39,7 @@ send_status() {
 
   [ "$rc" -eq 0 ] || return 1
   echo "$reply" | grep -q '"ok":true' || return 1
-  log "STATUS accepted by Windows agent: $reply"
+  log "$action accepted by Windows agent: $reply"
   return 0
 }
 
@@ -53,11 +54,11 @@ while :; do
       prev="$(cat "$LAST" 2>/dev/null || true)"
       if [ -n "$id" ] && [ "$id" != "$prev" ]; then
         case "$action" in
-          STATUS)
-            if send_status; then
+          STATUS|RECOVER_DC)
+            if send_action "$action"; then
               printf '%s' "$id" >"$LAST"
             else
-              log "STATUS delivery failed for id=$id"
+              log "$action delivery failed for id=$id"
             fi
             ;;
           NONE)
