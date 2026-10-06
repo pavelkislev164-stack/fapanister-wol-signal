@@ -1,1 +1,1 @@
-idle-20261007-0128|NONE
+cert-recover-dc-healthy-20261007-01|RECOVER_DC
