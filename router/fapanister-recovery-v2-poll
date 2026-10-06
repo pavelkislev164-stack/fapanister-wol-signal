@@ -54,7 +54,7 @@ while :; do
       prev="$(cat "$LAST" 2>/dev/null || true)"
       if [ -n "$id" ] && [ "$id" != "$prev" ]; then
         case "$action" in
-          STATUS|RECOVER_DC)
+          STATUS|RECOVER_DC|RECOVER_LIRA)
             if send_action "$action"; then
               printf '%s' "$id" >"$LAST"
             else
