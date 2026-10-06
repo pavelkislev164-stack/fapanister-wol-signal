@@ -22,9 +22,6 @@ Relevant files:
 - router/fapanister-recovery-v2-poll
 - router/fapanister-hmac.uc
 - router/fapanister-recovery-v2-init
-- router/fapanister-recovery-v2-poll
-- router/fapanister-hmac.uc
-- router/fapanister-recovery-v2-init
 
 Strict command allowlist:
 STATUS
@@ -39,29 +36,32 @@ No arbitrary shell. No secrets in this repository. Workflow control is restricte
 
 ## Certified status
 
-Independent STATUS path certified 2026-10-07:
+Certified 2026-10-07:
+- STATUS
+- RECOVER_DC
+- RECOVER_LIRA
 
-ChatGPT -> GitHub recovery-trigger.txt -> Cudy/OpenWrt Recovery v2 poller -> HMAC-SHA256 authenticated LAN request -> Windows Recovery Agent -> STATUS result
-
-Observed Windows result:
-DC active; Lira listening; Mesh running; RustDesk running.
+Independent path:
+ChatGPT -> GitHub recovery-trigger.txt -> Cudy/OpenWrt Recovery v2 poller -> HMAC-SHA256 authenticated LAN request -> Windows Recovery Agent -> requested recovery action.
 
 Windows Recovery Agent:
 - binds only to 192.168.1.169:8765
-- accepts authenticated requests with timestamp + nonce + HMAC-SHA256
-- rejects unsigned requests
-- replay/freshness protection enabled
+- HMAC-SHA256 authentication
+- timestamp freshness + nonce replay protection
+- rejects unsigned traffic
 
 Cudy Recovery v2:
 - separate from production WoL poller
-- GitHub Contents API used instead of raw.githubusercontent.com because the raw endpoint returned stale content during certification
+- GitHub Contents API used instead of raw.githubusercontent.com
 - dedicated procd service: fapanister-recovery-v2
 - HMAC helper uses ucode-mod-digest
 - no recovery secret is stored in GitHub
 
-GitHub issue workflow -> recovery-trigger.txt had already been validated separately. The 2026-10-07 independent Cudy -> Windows certification used a fresh GitHub trigger and was confirmed in the Windows LAN agent log from source 192.168.1.1.
+RECOVER_DC controlled failure was verified with the normal DC startup script temporarily unavailable.
 
-Next certification target: RECOVER_DC. Do not deliberately kill Desktop Commander until the RECOVER_DC implementation is installed and the independent route is ready to restore it.
+RECOVER_LIRA controlled failure was verified with the normal LiraBrowser startup script temporarily unavailable. LiraBrowser returned on 127.0.0.1:9333 using the same persistent profile, and the authenticated Tilda /projects/ session survived.
+
+See RECOVERY_V2.md for certification details.
 
 ## LiraBrowser note
 
@@ -69,8 +69,6 @@ LiraBrowser is NOT a ChatGPT/MCP connector.
 
 Canonical browser path:
 ChatGPT -> Desktop Commander -> Node/Playwright -> LiraBrowser Chrome -> CDP 127.0.0.1:9333
-
-Agents must not wait for a separate "Lira Browser" tool. If Desktop Commander is available, use it to run Playwright on Fapanister and attach with chromium.connectOverCDP('http://127.0.0.1:9333').
 
 Browser policy:
 - LiraBrowser/Chrome: production
