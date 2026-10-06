@@ -1,0 +1,75 @@
+#!/bin/sh
+set -u
+
+URL='https://api.github.com/repos/pavelkislev164-stack/fapanister-wol-signal/contents/recovery-trigger.txt?ref=main'
+ROOT='/etc/fapanister-recovery-v2'
+SECRET="$ROOT/secret"
+LAST="$ROOT/last_id"
+HMAC='/usr/libexec/fapanister-hmac.uc'
+HOST='192.168.1.169'
+PORT='8765'
+
+log() { logger -t fapanister-recovery-v2 "$*"; }
+
+send_status() {
+  ts="$(date +%s)"
+  nonce="$(head -c 16 /dev/urandom | hexdump -v -e '/1 "%02x"')"
+  body="$ts|$nonce|STATUS"
+  key_b64="$(cat "$SECRET" 2>/dev/null)" || return 1
+  sig="$(ucode -D key_b64="$key_b64" -D body="$body" "$HMAC" 2>/dev/null)" || return 1
+  [ "$(expr length "$sig")" -eq 64 ] || return 1
+
+  req="/tmp/fapanister-recovery-v2.req.$$"
+  reply_file="/tmp/fapanister-recovery-v2.reply.$$"
+  printf '%s|%s\n' "$body" "$sig" >"$req"
+
+  nc "$HOST" "$PORT" <"$req" >"$reply_file" 2>/dev/null &
+  npid=$!
+  ( sleep 5; kill "$npid" 2>/dev/null ) &
+  kpid=$!
+
+  wait "$npid"
+  rc=$?
+  kill "$kpid" 2>/dev/null
+  wait "$kpid" 2>/dev/null
+
+  reply="$(cat "$reply_file" 2>/dev/null)"
+  rm -f "$req" "$reply_file"
+
+  [ "$rc" -eq 0 ] || return 1
+  echo "$reply" | grep -q '"ok":true' || return 1
+  log "STATUS accepted by Windows agent: $reply"
+  return 0
+}
+
+mkdir -p "$ROOT"
+
+while :; do
+  line="$(curl -fsS -H 'Accept: application/vnd.github.raw+json' -H 'Cache-Control: no-cache' "$URL" 2>/dev/null | head -n 1 | tr -d '\r')"
+  case "$line" in
+    *'|'*)
+      id="$(printf '%s' "$line" | cut -d '|' -f 1)"
+      action="$(printf '%s' "$line" | cut -d '|' -f 2)"
+      prev="$(cat "$LAST" 2>/dev/null || true)"
+      if [ -n "$id" ] && [ "$id" != "$prev" ]; then
+        case "$action" in
+          STATUS)
+            if send_status; then
+              printf '%s' "$id" >"$LAST"
+            else
+              log "STATUS delivery failed for id=$id"
+            fi
+            ;;
+          NONE)
+            printf '%s' "$id" >"$LAST"
+            ;;
+          *)
+            log "Unsupported action ignored: $action id=$id"
+            printf '%s' "$id" >"$LAST"
+            ;;
+        esac
+      fi
+      ;;
+  esac
+  sleep 120
+done
