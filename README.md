@@ -1,30 +1,51 @@
-# Fapanister WoL Signal — RETIRED
+# Fapanister WoL Signal / Recovery v2 Control Plane
 
-This repository is retained only as historical evidence of an earlier Wake-on-LAN control plane.
+Canonical state: 2026-10-06.
 
-Retired on: 2026-10-04.
+## Production WoL
 
-## Current production path
+This repository is NOT the production Wake-on-LAN transport.
 
-The active WoL path no longer uses GitHub Actions or `wake-trigger.txt`.
+Production WoL:
+Nothing Phone HTTP Shortcut -> private external signal -> Cudy/OpenWrt -> fapanister-wol-poll -> fapanister-wake -> Fapanister
 
-Current architecture:
+The production WoL path is certified and must remain separate from Recovery v2.
 
-Android HTTP Shortcut
--> private external signal channel
--> Cudy WR3000S v1 / OpenWrt 25.12.5
--> `/usr/bin/fapanister-wol-poll`
--> `/usr/bin/fapanister-wake`
--> broadcast Magic Packet on `br-lan`
--> Fapanister
+## Recovery v2
 
-The current control-channel identifier is intentionally not stored in this public repository.
+This repository now contains the GitHub-side Recovery v2 control plane.
 
-## Status
+Relevant files:
+- recovery-trigger.txt
+- RECOVERY_V2.md
+- .github/workflows/recovery-control.yml
 
-- GitHub workflow: removed.
-- Trigger file: removed.
-- Control issue: closed / retired.
-- No active router polls this repository.
+Strict command allowlist:
+STATUS
+RECOVER_DC
+RECOVER_LIRA
+RECOVER_MESH
+RECOVER_RUSTDESK
+RECOVER_ALL
+NONE
 
-Do not restore this repository as a production WoL path unless the architecture is deliberately redesigned and recertified.
+No arbitrary shell. No secrets in this repository. Workflow control is restricted to the authorized repository owner.
+
+STATUS end-to-end has been tested successfully. Full independent Cudy/OpenWrt -> Windows recovery and RECOVER_* certification are still in progress.
+
+## LiraBrowser note
+
+LiraBrowser is NOT a ChatGPT/MCP connector.
+
+Canonical browser path:
+ChatGPT -> Desktop Commander -> Node/Playwright -> LiraBrowser Chrome -> CDP 127.0.0.1:9333
+
+Agents must not wait for a separate "Lira Browser" tool. If Desktop Commander is available, use it to run Playwright on Fapanister and attach with chromium.connectOverCDP('http://127.0.0.1:9333').
+
+Browser policy:
+- LiraBrowser/Chrome: production
+- Edge: reserve only
+- Opera: retired
+- Firefox: retired
+
+Never commit browser profiles, cookies, sessions, passwords, SSH private keys, tokens or router credentials.
