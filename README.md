@@ -63,6 +63,20 @@ RECOVER_LIRA controlled failure was verified with the normal LiraBrowser startup
 
 See RECOVERY_V2.md for certification details.
 
+## Administrative route is separate
+
+Router administration is NOT done through the Recovery v2 GitHub trigger.
+
+The separate local admin route is:
+
+Desktop Commander -> Windows/Node.js -> ssh2 -> Cudy/OpenWrt
+
+It is documented in the fapanister-wol-bridge repository as CUDY-ADMIN.md.
+
+This separation is intentional:
+- Recovery v2 keeps a strict allowlist and no arbitrary shell.
+- The admin route is local-only from Fapanister and uses the existing LAN-only SSH service.
+
 ## LiraBrowser note
 
 LiraBrowser is NOT a ChatGPT/MCP connector.
