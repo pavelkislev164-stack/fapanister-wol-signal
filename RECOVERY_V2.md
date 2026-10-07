@@ -86,17 +86,35 @@ Independent RECOVER_LIRA is CERTIFIED.
 Dedicated recovery script:
 C:\Users\FAPster\RecoveryV2\Recover-LiraBrowser.ps1
 
-## Administrative note
+## Administrative route separation
 
 Classic Windows OpenSSH launched directly from the Desktop Commander session still returns exit 255.
-A working alternative was found on 2026-10-07:
-Desktop Commander -> Node.js -> ssh2 npm library -> Cudy/OpenWrt using the existing recovery key.
 
-This is an administrative/experimental route, not part of the Recovery v2 command allowlist.
+A permanent local administrative route was certified on 2026-10-07:
+
+Desktop Commander -> Windows/Node.js -> ssh2 -> Cudy/OpenWrt
+
+Classification: ADMIN / RESERVE.
+
+Local runtime:
+C:\\Users\\FAPster\\CudyAdmin
+
+The route:
+- uses the existing local ED25519 recovery key without copying it to GitHub;
+- pins the Cudy ED25519 host key;
+- creates no Windows listener;
+- keeps router SSH LAN-only;
+- was verified with live OpenWrt system-board and release queries.
+
+This route is intentionally separate from Recovery v2.
+Recovery v2 keeps a strict action allowlist and MUST NOT become an arbitrary-shell control plane.
+
+Runbook and safe source are stored in:
+pavelkislev164-stack/fapanister-wol-bridge / CUDY-ADMIN.md and admin/*
 
 ## Next
 
-1. Implement and certify RECOVER_MESH.
-2. Implement and certify RECOVER_RUSTDESK.
-3. RustDesk laptop input test.
-4. Final cold-boot/recovery/security audit.
+1. RECOVER_MESH is optional/reserve work rather than a core blocker.
+2. RustDesk laptop input test when useful.
+3. Use the certified local CudyAdmin route for router diagnostics/maintenance.
+4. Final cold-boot/WoL/Recovery v2/CudyAdmin/security audit when desired.
