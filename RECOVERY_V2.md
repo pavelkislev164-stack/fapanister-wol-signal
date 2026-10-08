@@ -8,16 +8,20 @@ Production Wake-on-LAN stays unchanged and separate.
 
 ChatGPT -> GitHub -> OpenWrt Recovery v2 poller -> authenticated LAN-only Windows Recovery Agent.
 
-Current allowlist:
+Actions currently implemented by the router poller (verified from router/fapanister-recovery-v2-poll):
 - STATUS
 - RECOVER_DC
 - RECOVER_LIRA
+- NONE (neutral trigger / no remote action)
+
+Reserved/documented action names, **NOT implemented in router dispatch**:
 - RECOVER_MESH
 - RECOVER_RUSTDESK
 - RECOVER_ALL
-- NONE
 
-No arbitrary shell.
+Do not send reserved actions expecting recovery; the poller ignores them. No arbitrary shell.
+
+Incident notes (2026-10-08): RECOVER_DC delivery or an ok=True from the Windows agent does not prove hosted Desktop Commander end-to-end connectivity. A Node process may exist while the hosted command channel is unresponsive; hosted Realtime failures are also reported upstream. See private fapanister-wol-bridge/DC-INCIDENT-2026-10-08.md for a safe recovery diagnostic runbook.
 
 ## Security
 
