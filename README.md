@@ -23,14 +23,15 @@ Relevant files:
 - router/fapanister-hmac.uc
 - router/fapanister-recovery-v2-init
 
-Strict command allowlist:
+Implemented router dispatch actions (verified against router/fapanister-recovery-v2-poll):
 STATUS
 RECOVER_DC
 RECOVER_LIRA
-RECOVER_MESH
-RECOVER_RUSTDESK
-RECOVER_ALL
 NONE
+
+RECOVER_MESH, RECOVER_RUSTDESK and RECOVER_ALL are reserved names accepted by the historical GitHub workflow, but the current router poller does not dispatch them. Do not send them expecting recovery.
+
+A successful GitHub write or a running Windows DC process does not prove hosted DC connectivity. Require a fresh returned command result. See RECOVERY_V2.md and private fapanister-wol-bridge/DC-INCIDENT-2026-10-08.md.
 
 No arbitrary shell. No secrets in this repository. Workflow control is restricted to the authorized repository owner.
 
