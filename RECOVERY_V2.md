@@ -122,3 +122,11 @@ pavelkislev164-stack/fapanister-wol-bridge / CUDY-ADMIN.md and admin/*
 2. RustDesk laptop input test when useful.
 3. Use the certified local CudyAdmin route for router diagnostics/maintenance.
 4. Final cold-boot/WoL/Recovery v2/CudyAdmin/security audit when desired.
+
+## Revalidated 2026-10-09 after local connectivity incident
+
+- Windows LAN Recovery Agent and Fapanister DC Watchdog were found stopped despite scheduled tasks being present. They were safely started without reboot. Windows Agent listened only on `192.168.1.169:8765`.
+- NEW authenticated end-to-end `STATUS`: GitHub control trigger -> Cudy poller -> HMAC -> Windows Agent; Windows log: `2026-10-09T16:48:46 accepted STATUS from 192.168.1.1; ok=True`. Router response: `DC=1; Lira=Listening; Mesh=Running; RustDesk=Running`.
+- `recovery-trigger.txt` reset to `lira-audit-20261009-1649-reset|NONE` and independently confirmed via GitHub.
+- Local recovery supervisor and improved watchdog source/runbook are documented in `fapanister-wol-bridge/AUDIT-2026-10-09.md` and `admin/*`. These require an active FAPster interactive session; no logoff/cold-boot re-certification was conducted.
+- Production WoL remained unchanged. Recovery v2 strict router action dispatch remains unchanged; STATUS/RECOVER_DC/RECOVER_LIRA only.
