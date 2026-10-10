@@ -1,1 +1,1 @@
-lira-preboot-20261010-0858|STATUS
+lira-preboot-20261010-0859-reset|NONE
