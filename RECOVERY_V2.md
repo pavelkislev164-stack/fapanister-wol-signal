@@ -130,3 +130,14 @@ pavelkislev164-stack/fapanister-wol-bridge / CUDY-ADMIN.md and admin/*
 - `recovery-trigger.txt` reset to `lira-audit-20261009-1649-reset|NONE` and independently confirmed via GitHub.
 - Local recovery supervisor and improved watchdog source/runbook are documented in `fapanister-wol-bridge/AUDIT-2026-10-09.md` and `admin/*`. These require an active FAPster interactive session; no logoff/cold-boot re-certification was conducted.
 - Production WoL remained unchanged. Recovery v2 strict router action dispatch remains unchanged; STATUS/RECOVER_DC/RECOVER_LIRA only.
+
+## State update 2026-10-10, before reboot test
+
+Read [pre-reboot audit](https://github.com/pavelkislev164-stack/fapanister-wol-bridge/blob/main/PRE-REBOOT-AUDIT-2026-10-10.md) for verification scope and limitations.
+
+- PRODUCTION DC switched after explicit user authorization to `Fapanister Desktop Commander Elevated` (FAPster/Interactive/Highest/PT0S) at 08:02 MSK. Remote ping and real administrative Windows token verified. Protected runtime at `C:\ProgramData\FapanisterDCElevated`.
+- Former `Desktop Commander Remote` task PT72H is Disabled. On-demand `Fapanister DC Unlimited Reserve` remains Limited fallback, not production. Windows Recovery DC starter, Watchdog and Supervisor check the elevated task state before invoking limited fallback, avoiding duplicate remote agents when elevation hides process details.
+- `Fapanister DC Watchdog` and `Fapanister LAN Recovery V2` now execute fixed local scripts via hidden WScript launchers, with task XML backups saved locally. Both tested Running; agent still binds only `192.168.1.169:8765`. A switch in executable packaging must not be mistaken for a new network endpoint.
+- Independent router HMAC allowlist and protocol unchanged. The router does not expose arbitrary shell. Real end-to-end STATUS was last confirmed at 01:57 MSK before the latest hidden-launch change; additional pre-reboot STATUS verification was initiated on 2026-10-10 and must be checked for acknowledgement and reset to NONE before any reboot.
+- Separate `Fapanister Recovery Agent SYSTEM` is registered **Disabled** as staging. Do not start it while the old user agent owns port 8765; true pre-logon recovery is not certified.
+- Production WoL unchanged. No reboot/logoff after privileged DC switch. Recovery v2 `ok:true` or a live local Node process alone does not prove real hosted DC command connectivity; always perform live ping/remote command.
