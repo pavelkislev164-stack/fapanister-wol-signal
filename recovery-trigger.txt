@@ -1,1 +1,1 @@
-lira-status-20261013-2101-reset|NONE
+lira-recoverdc-20261013-2109|RECOVER_DC
