@@ -1,1 +1,1 @@
-lira-recoverdc-20261013-2109-reset|NONE
+lira-incident-20261013-recoverdc-2|RECOVER_DC
