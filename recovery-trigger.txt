@@ -1,1 +1,1 @@
-reboot-preflight-20261013-reset|NONE
+lira-status-20261013-2058|STATUS
