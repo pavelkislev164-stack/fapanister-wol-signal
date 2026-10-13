@@ -1,1 +1,1 @@
-lira-preboot-20261010-0859-reset|NONE
+dc-recover-20261013-2032|RECOVER_DC
