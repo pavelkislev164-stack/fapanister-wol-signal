@@ -1,1 +1,1 @@
-dc-recover-20261013-2036-reset|NONE
+reboot-preflight-dc-20261013-2040|RECOVER_DC
