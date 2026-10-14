@@ -1,1 +1,1 @@
-tilda-readiness-recoverdc-20261014-2036|RECOVER_DC
+tilda-readiness-20261014-dc-reset|NONE
