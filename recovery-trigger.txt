@@ -1,1 +1,1 @@
-postupgrade-20261019-1792442217550-reset|NONE
+verified-reboot-1792443555588|STATUS
