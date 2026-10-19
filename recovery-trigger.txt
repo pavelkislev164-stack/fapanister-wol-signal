@@ -1,1 +1,1 @@
-verified-reboot-1792443555588|STATUS
+verified-reboot-1792443555588-reset|NONE
